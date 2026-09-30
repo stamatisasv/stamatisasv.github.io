@@ -1,0 +1,266 @@
+/* ================================
+   RESET
+================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #f2f0eb;
+  color: #111111;
+
+  font-family: "Inter", sans-serif;
+
+  min-height: 100vh;
+
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+
+/* ================================
+   NAVBAR
+================================ */
+
+.navbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+
+  padding: 30px 4vw;
+
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+
+  z-index: 100;
+}
+
+.logo {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.nav-links {
+  display: flex;
+  gap: 36px;
+}
+
+.nav-links a,
+.contact-link {
+  font-size: 13px;
+  font-weight: 400;
+
+  transition: opacity 0.3s ease;
+}
+
+.nav-links a:hover,
+.contact-link:hover {
+  opacity: 0.45;
+}
+
+.contact-link {
+  justify-self: end;
+}
+
+
+/* ================================
+   HERO
+================================ */
+
+.hero {
+  min-height: 100vh;
+
+  padding: 120px 4vw 40px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+
+/* small top labels */
+
+.hero-top {
+  display: flex;
+  justify-content: space-between;
+
+  font-size: 10px;
+  letter-spacing: 0.12em;
+
+  text-transform: uppercase;
+
+  color: #77736d;
+}
+
+
+/* ================================
+   HERO TITLE
+================================ */
+
+.hero-title {
+  width: 100%;
+}
+
+.hero-title h1 {
+  font-size: clamp(80px, 14vw, 250px);
+
+  line-height: 0.75;
+
+  font-weight: 400;
+
+  letter-spacing: -0.075em;
+}
+
+.hero-title-bottom {
+  display: flex;
+  align-items: center;
+
+  gap: 3vw;
+
+  margin-top: 1.4vw;
+}
+
+.hero-title-bottom h2 {
+  font-family: "DM Serif Display", serif;
+
+  font-size: clamp(70px, 12vw, 220px);
+
+  font-weight: 400;
+  font-style: italic;
+
+  line-height: 0.8;
+
+  letter-spacing: -0.055em;
+}
+
+
+/* little circle detail */
+
+.hero-dot {
+  width: clamp(45px, 6vw, 100px);
+  height: clamp(45px, 6vw, 100px);
+
+  border-radius: 50%;
+
+  background: #876559;
+
+  flex-shrink: 0;
+}
+
+
+/* ================================
+   HERO BOTTOM
+================================ */
+
+.hero-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.hero-bottom p {
+  max-width: 390px;
+
+  font-size: 17px;
+
+  line-height: 1.5;
+
+  letter-spacing: -0.02em;
+}
+
+.hero-scroll {
+  display: flex;
+  align-items: center;
+
+  gap: 15px;
+
+  font-size: 10px;
+
+  letter-spacing: 0.1em;
+
+  color: #77736d;
+}
+
+.hero-scroll span {
+  font-size: 16px;
+}
+
+
+/* ================================
+   MOBILE
+================================ */
+
+@media (max-width: 768px) {
+
+  .navbar {
+    padding: 24px 20px;
+
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .hero {
+    padding:
+      110px
+      20px
+      30px;
+  }
+
+  .hero-top {
+    font-size: 9px;
+  }
+
+  .hero-title h1 {
+    font-size: 20vw;
+
+    line-height: 0.85;
+  }
+
+  .hero-title-bottom {
+    margin-top: 10px;
+
+    gap: 14px;
+  }
+
+  .hero-title-bottom h2 {
+    font-size: 19vw;
+  }
+
+  .hero-dot {
+    width: 40px;
+    height: 40px;
+  }
+
+  .hero-bottom {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 50px;
+  }
+
+  .hero-bottom p {
+    max-width: 280px;
+
+    font-size: 15px;
+  }
+
+}
