@@ -146,3 +146,16 @@
   .contact-email{font-size:clamp(40px,12vw,64px);min-height:64px}
   .site-footer{display:none}
 }
+
+/* A minimal product preview with a direct booking link. */
+.heal-surface{gap:24px}
+.heal-preview{position:relative;z-index:1;background:var(--paper);color:var(--blue);padding:28px 32px;border-radius:4px;translate:0 var(--art-shift,0px);transition:translate .25s ease-out}
+.heal-preview-label{font-size:9px;letter-spacing:.12em;color:var(--muted)}
+.heal-preview h3{font-size:clamp(24px,2.8vw,36px);font-weight:400;letter-spacing:-.04em;line-height:1.15;margin:16px 0 24px}
+.heal-flow{list-style:none;display:flex;flex-wrap:wrap;gap:14px 24px;padding:0;margin:0 0 26px}
+.heal-flow li{font-size:12px;line-height:1.5}.heal-flow li span{color:var(--red);font-size:10px;margin-right:8px}
+.heal-book{display:inline-flex;align-items:center;gap:36px;min-height:44px;padding:12px 18px;background:var(--blue);color:var(--cream);font-size:12px;border-radius:2px;transition:background .2s,transform .2s}
+.heal-book:hover{background:#102260;transform:translateY(-2px)}
+.heal-book:focus-visible{outline-color:var(--blue)}
+@media(max-width:600px){.heal-surface{min-height:0;gap:28px}.heal-preview{padding:24px 20px;translate:none}.heal-preview h3{font-size:28px}.heal-flow{flex-direction:column;gap:12px}.heal-book{justify-content:space-between;width:100%}}
+@media(prefers-reduced-motion:reduce){.heal-preview{translate:none}.heal-book:hover{transform:none}}
