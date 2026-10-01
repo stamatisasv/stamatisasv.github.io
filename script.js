@@ -81,7 +81,7 @@ gallery?.addEventListener('scroll', scheduleUpdate, { passive: true });
 window.addEventListener('scroll', scheduleUpdate, { passive: true });
 window.addEventListener('resize', scheduleUpdate);
 updatePosition();
-// Place your PDF at assets/stamatis-asvestas-cv.pdf to enable the CV download.
+// CV download uses the PDF in the assets folder.
 const contactLinks = {
     instagram: 'https://www.instagram.com/stamatis.asv/',
     linkedin: 'https://www.linkedin.com/in/stamatis-asvestas-7791b1438/',
@@ -102,43 +102,35 @@ const emailButton = document.querySelector('.contact-email');
 const emailAddress = document.querySelector('.email-address');
 const copyStatus = document.querySelector('#copy-status');
 const email = emailButton?.dataset.email?.trim();
-
 let copyTimer;
 let copying = false;
-
 if (emailButton && emailAddress && email) {
-    emailAddress.textContent = 'Show Email';
-
+    emailAddress.textContent = 'Email';
     emailButton.disabled = false;
     emailButton.setAttribute('aria-label', `Copy email address: ${email}`);
-
     emailButton.addEventListener('click', async () => {
-        if (copying) return;
-
+        if (copying)
+            return;
         copying = true;
         clearTimeout(copyTimer);
-
         try {
             await navigator.clipboard.writeText(email);
-
             emailButton.classList.add('is-copied');
-
             if (copyStatus)
                 copyStatus.textContent = 'Email address copied to clipboard.';
-
             copyTimer = setTimeout(() => {
                 emailButton.classList.remove('is-copied');
-
                 if (copyStatus)
                     copyStatus.textContent = '';
             }, 1800);
-
-        } catch {
+        }
+        catch {
             emailButton.classList.remove('is-copied');
-
             if (copyStatus)
-                copyStatus.textContent = `Could not copy automatically. Email: ${email}`;
-        } finally {
+                copyStatus.textContent = 'Could not copy automatically. Opening your email app.';
+            window.location.href = `mailto:${email}`;
+        }
+        finally {
             copying = false;
         }
     });

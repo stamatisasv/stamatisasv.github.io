@@ -70,11 +70,11 @@ window.addEventListener('scroll', scheduleUpdate, { passive: true });
 window.addEventListener('resize', scheduleUpdate);
 updatePosition();
 
-// Place your PDF at assets/stamatis-asvestas-cv.pdf to enable the CV download.
+// CV download uses the PDF in the assets folder.
 const contactLinks: Record<string, string> = {
   instagram: 'https://www.instagram.com/stamatis.asv/',
   linkedin: 'https://www.linkedin.com/in/stamatis-asvestas-7791b1438/',
-  cv: 'assets/stamatis-asvestas-cv.pdf',
+  cv: 'assets/CVAsvestas.pdf',
 };
 document.querySelectorAll<HTMLAnchorElement>('[data-contact]').forEach(link => {
   const url = contactLinks[link.dataset.contact || ''];
@@ -94,7 +94,7 @@ const email = emailButton?.dataset.email?.trim();
 let copyTimer: ReturnType<typeof setTimeout> | undefined;
 let copying = false;
 if (emailButton && emailAddress && email) {
-  emailAddress.textContent = email;
+  emailAddress.textContent = 'Email';
   emailButton.disabled = false;
   emailButton.setAttribute('aria-label', `Copy email address: ${email}`);
   emailButton.addEventListener('click', async () => {
@@ -111,13 +111,8 @@ if (emailButton && emailAddress && email) {
       }, 1800);
     } catch {
       emailButton.classList.remove('is-copied');
-      if (copyStatus) copyStatus.textContent = `Could not copy automatically. Email: ${email}`;
-      // Keep the address available for manual copying if clipboard access is denied.
-      const selection = window.getSelection();
-      const range = document.createRange();
-      range.selectNodeContents(emailAddress);
-      selection?.removeAllRanges();
-      selection?.addRange(range);
+      if (copyStatus) copyStatus.textContent = 'Could not copy automatically. Opening your email app.';
+      window.location.href = `mailto:${email}`;
     } finally {
       copying = false;
     }
