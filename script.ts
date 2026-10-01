@@ -1,383 +1,71 @@
-// ============================================
-// DOM REFERENCES
-// ============================================
+const gallery = document.querySelector<HTMLElement>('.gallery');
+const panels = Array.from(document.querySelectorAll<HTMLElement>('.panel'));
+const markers = Array.from(document.querySelectorAll<HTMLAnchorElement>('.index a'));
+const previous = document.querySelector<HTMLButtonElement>('#previous');
+const next = document.querySelector<HTMLButtonElement>('#next');
+const position = document.querySelector<HTMLElement>('#position');
+const mobile = window.matchMedia('(max-width: 600px)');
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+let current = 0;
 
-const cursorGlow =
-  document.querySelector<HTMLElement>(".cursor-glow");
-
-const revealElements =
-  document.querySelectorAll<HTMLElement>(".reveal");
-
-const navLinks =
-  document.querySelectorAll<HTMLAnchorElement>(
-    'a[href^="#"]'
-  );
-
-const projects =
-  document.querySelectorAll<HTMLElement>(
-    ".project"
-  );
-
-
-// ============================================
-// CURSOR GLOW
-// ============================================
-
-if (cursorGlow) {
-
-  window.addEventListener(
-    "mousemove",
-    (event: MouseEvent) => {
-
-      cursorGlow.style.left =
-        `${event.clientX}px`;
-
-      cursorGlow.style.top =
-        `${event.clientY}px`;
-
-      cursorGlow.style.opacity =
-        "1";
-
-    }
-  );
-
-
-  window.addEventListener(
-    "mouseleave",
-    () => {
-
-      cursorGlow.style.opacity =
-        "0";
-
-    }
-  );
-
+function goToPanel(index: number) {
+  const panel = panels[index];
+  if (!panel || !gallery) return;
+  const behavior = reducedMotion.matches ? 'instant' : 'smooth';
+  if (mobile.matches) {
+    panel.scrollIntoView({ behavior, block: 'start' });
+  } else {
+    const inset = parseFloat(getComputedStyle(gallery).scrollPaddingLeft) || 0;
+    gallery.scrollTo({ left: gallery.scrollLeft + panel.getBoundingClientRect().left - gallery.getBoundingClientRect().left - inset, behavior });
+  }
 }
 
+function updatePosition() {
+  if (!gallery) return;
+  const inset = mobile.matches ? 20 : (parseFloat(getComputedStyle(gallery).scrollPaddingLeft) || 0);
+  let closest = Infinity;
+  panels.forEach((panel, index) => {
+    const rect = panel.getBoundingClientRect();
+    const distance = Math.abs((mobile.matches ? rect.top : rect.left) - inset);
+    if (distance < closest) { closest = distance; current = index; }
+  });
+  markers.forEach((marker, index) => {
+    if (index === current) marker.setAttribute('aria-current', 'true');
+    else marker.removeAttribute('aria-current');
+  });
+  if (previous) previous.disabled = current === 0;
+  if (next) next.disabled = current === panels.length - 1;
+  if (position) position.textContent = `${String(current + 1).padStart(2, '0')} / ${String(panels.length).padStart(2, '0')}`;
+}
 
-// ============================================
-// SCROLL REVEAL
-// ============================================
-
-const revealObserver =
-  new IntersectionObserver(
-
-    (
-      entries:
-      IntersectionObserverEntry[]
-    ) => {
-
-      entries.forEach(
-        (
-          entry:
-          IntersectionObserverEntry
-        ) => {
-
-          if (
-            entry.isIntersecting
-          ) {
-
-            entry.target
-              .classList
-              .add("visible");
-
-            revealObserver
-              .unobserve(
-                entry.target
-              );
-
-          }
-
-        }
-      );
-
-    },
-
-    {
-      threshold: 0.12,
-      rootMargin:
-        "0px 0px -40px 0px"
-    }
-
-  );
-
-
-revealElements
-  .forEach(
-    (
-      element:
-      HTMLElement
-    ) => {
-
-      revealObserver
-        .observe(element);
-
-    }
-  );
-
-
-// ============================================
-// SMOOTH ANCHOR NAVIGATION
-// ============================================
-
-navLinks.forEach(
-  (
-    link:
-    HTMLAnchorElement
-  ) => {
-
-    link.addEventListener(
-      "click",
-      (
-        event:
-        MouseEvent
-      ) => {
-
-        const targetId =
-          link.getAttribute(
-            "href"
-          );
-
-        if (
-          !targetId ||
-          targetId === "#"
-        ) {
-
-          return;
-
-        }
-
-
-        const target =
-          document.querySelector<HTMLElement>(
-            targetId
-          );
-
-
-        if (!target) {
-
-          return;
-
-        }
-
-
-        event.preventDefault();
-
-
-        target.scrollIntoView(
-          {
-            behavior: "smooth",
-            block: "start"
-          }
-        );
-
-      }
-    );
-
+document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach(link => {
+  link.addEventListener('click', event => {
+    const index = panels.findIndex(panel => `#${panel.id}` === link.getAttribute('href'));
+    if (index < 0) return;
+    event.preventDefault();
+    goToPanel(index);
+    history.replaceState(null, '', `#${panels[index].id}`);
+    // Move keyboard focus to the destination without interrupting the animation.
+    panels[index].setAttribute('tabindex', '-1');
+    panels[index].focus({ preventScroll: true });
+  });
+});
+previous?.addEventListener('click', () => goToPanel(current - 1));
+next?.addEventListener('click', () => goToPanel(current + 1));
+gallery?.addEventListener('keydown', event => {
+  if (mobile.matches || event.target !== gallery) return;
+  if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+    event.preventDefault();
+    goToPanel(current + (event.key === 'ArrowRight' ? 1 : -1));
   }
-);
-
-
-// ============================================
-// PROJECT POINTER EFFECT
-// ============================================
-
-projects.forEach(
-  (
-    project:
-    HTMLElement
-  ) => {
-
-    project.addEventListener(
-      "mousemove",
-      (
-        event:
-        MouseEvent
-      ) => {
-
-        const rect =
-          project
-            .getBoundingClientRect();
-
-        const x =
-          event.clientX -
-          rect.left;
-
-        const y =
-          event.clientY -
-          rect.top;
-
-        const centerX =
-          rect.width / 2;
-
-        const centerY =
-          rect.height / 2;
-
-        const rotateY =
-          (
-            x -
-            centerX
-          ) /
-          80;
-
-        const rotateX =
-          (
-            centerY -
-            y
-          ) /
-          100;
-
-
-        project.style.transform =
-          `
-          perspective(1500px)
-          rotateX(${rotateX}deg)
-          rotateY(${rotateY}deg)
-          scale(0.992)
-          `;
-
-      }
-    );
-
-
-    project.addEventListener(
-      "mouseleave",
-      () => {
-
-        project.style.transform =
-          "";
-
-      }
-    );
-
-  }
-);
-
-
-// ============================================
-// ACTIVE NAV SECTION
-// ============================================
-
-const sections =
-  document.querySelectorAll<HTMLElement>(
-    "section[id]"
-  );
-
-
-const activeObserver =
-  new IntersectionObserver(
-
-    (
-      entries:
-      IntersectionObserverEntry[]
-    ) => {
-
-      entries.forEach(
-        (
-          entry:
-          IntersectionObserverEntry
-        ) => {
-
-          if (
-            !entry.isIntersecting
-          ) {
-
-            return;
-
-          }
-
-
-          const sectionId =
-            entry.target
-              .getAttribute(
-                "id"
-              );
-
-
-          if (!sectionId) {
-
-            return;
-
-          }
-
-
-          document
-            .querySelectorAll(
-              ".nav-links a"
-            )
-            .forEach(
-              (
-                navItem:
-                Element
-              ) => {
-
-                const link =
-                  navItem as
-                  HTMLAnchorElement;
-
-                const href =
-                  link
-                    .getAttribute(
-                      "href"
-                    );
-
-
-                if (
-                  href ===
-                  `#${sectionId}`
-                ) {
-
-                  link.style.opacity =
-                    "1";
-
-                } else {
-
-                  link.style.opacity =
-                    "";
-
-                }
-
-              }
-            );
-
-        }
-      );
-
-    },
-
-    {
-      threshold:
-        0.35
-    }
-
-  );
-
-
-sections.forEach(
-  (
-    section:
-    HTMLElement
-  ) => {
-
-    activeObserver
-      .observe(section);
-
-  }
-);
-
-
-// ============================================
-// PAGE READY
-// ============================================
-
-window.addEventListener(
-  "load",
-  () => {
-
-    document
-      .body
-      .classList
-      .add("loaded");
-
-  }
-);
+});
+let scheduled = false;
+function scheduleUpdate() {
+  if (scheduled) return;
+  scheduled = true;
+  requestAnimationFrame(() => { updatePosition(); scheduled = false; });
+}
+gallery?.addEventListener('scroll', scheduleUpdate, { passive: true });
+window.addEventListener('scroll', scheduleUpdate, { passive: true });
+window.addEventListener('resize', scheduleUpdate);
+updatePosition();

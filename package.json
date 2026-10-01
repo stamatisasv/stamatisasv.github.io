@@ -4,7 +4,9 @@
   "description": "",
   "main": "script.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc script.ts --target ES2020 --lib ES2020,DOM --strict --noEmitOnError",
+    "check": "tsc script.ts --target ES2020 --lib ES2020,DOM --strict --noEmit",
+    "dev": "python3 -m http.server 8000"
   },
   "repository": {
     "type": "git",
