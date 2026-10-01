@@ -102,40 +102,43 @@ const emailButton = document.querySelector('.contact-email');
 const emailAddress = document.querySelector('.email-address');
 const copyStatus = document.querySelector('#copy-status');
 const email = emailButton?.dataset.email?.trim();
+
 let copyTimer;
 let copying = false;
+
 if (emailButton && emailAddress && email) {
-    emailAddress.textContent = email;
+    emailAddress.textContent = 'Show Email';
+
     emailButton.disabled = false;
     emailButton.setAttribute('aria-label', `Copy email address: ${email}`);
+
     emailButton.addEventListener('click', async () => {
-        if (copying)
-            return;
+        if (copying) return;
+
         copying = true;
         clearTimeout(copyTimer);
+
         try {
             await navigator.clipboard.writeText(email);
+
             emailButton.classList.add('is-copied');
+
             if (copyStatus)
                 copyStatus.textContent = 'Email address copied to clipboard.';
+
             copyTimer = setTimeout(() => {
                 emailButton.classList.remove('is-copied');
+
                 if (copyStatus)
                     copyStatus.textContent = '';
             }, 1800);
-        }
-        catch {
+
+        } catch {
             emailButton.classList.remove('is-copied');
+
             if (copyStatus)
                 copyStatus.textContent = `Could not copy automatically. Email: ${email}`;
-            // Keep the address available for manual copying if clipboard access is denied.
-            const selection = window.getSelection();
-            const range = document.createRange();
-            range.selectNodeContents(emailAddress);
-            selection?.removeAllRanges();
-            selection?.addRange(range);
-        }
-        finally {
+        } finally {
             copying = false;
         }
     });
