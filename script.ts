@@ -22,7 +22,7 @@ function goToPanel(index: number) {
 
 function updatePosition() {
   if (!gallery) return;
-  const inset = mobile.matches ? 20 : (parseFloat(getComputedStyle(gallery).scrollPaddingLeft) || 0);
+  const inset = mobile.matches ? ((document.querySelector<HTMLElement>('.site-header')?.getBoundingClientRect().height || 108) + 14) : (parseFloat(getComputedStyle(gallery).scrollPaddingLeft) || 0);
   let closest = Infinity;
   panels.forEach((panel, index) => {
     const rect = panel.getBoundingClientRect();

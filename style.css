@@ -91,12 +91,60 @@
 @keyframes person-rise{from{opacity:0;translate:0 30px}to{opacity:1;translate:0 0}}
 @media(prefers-reduced-motion:reduce){.intro-surface{transform:none;border-radius:0}.intro-orb{scale:1}.heal-art,.order-art,.temple-art,.people-art{translate:none}}
 
-/* Center navigation independently of the name and location. */
-.site-header{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);column-gap:24px}
-.site-header .wordmark{justify-self:start}
-.site-header nav{justify-self:center;justify-content:center;width:auto}
-.site-header .location{justify-self:end}
+/* Header links and slide indicators each sit on the viewport center line. */
+.site-header{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);column-gap:20px}
+.site-header .wordmark{grid-column:1;justify-self:start}
+.site-header nav{grid-column:2;justify-self:center;justify-content:center;width:auto}
+.site-header .location{grid-column:3;justify-self:end}
 .gallery-tools{justify-content:center;height:52px}
-.site-footer{justify-content:flex-end}
-@media(max-width:900px){.site-header{grid-template-columns:minmax(0,1fr);height:auto;min-height:110px;row-gap:14px;padding-top:20px;padding-bottom:16px}.site-header nav{grid-row:2;gap:32px}.site-header .wordmark{grid-row:1}}
-@media(max-width:600px){.gallery-tools{height:48px}.site-footer{display:none}}
+.site-footer{justify-content:center}
+@media(min-width:601px) and (max-width:1000px){.site-header{height:auto;min-height:108px;grid-template-columns:1fr;gap:8px;padding-top:14px;padding-bottom:14px}.site-header nav{grid-column:1;grid-row:1}.site-header .wordmark{grid-column:1;grid-row:2;font-size:22px}}
+
+/* Phone layouts: centered top links, generous touch targets, readable cards. */
+@media(max-width:600px){
+  :root{--gutter:16px}
+  .site-header{position:sticky;top:0;z-index:10;height:auto;min-height:108px;grid-template-columns:minmax(0,1fr);gap:8px;padding:10px var(--gutter) 12px;background:#f4f2eaf5;border-bottom:1px solid #18308512;backdrop-filter:blur(12px)}
+  .site-header nav{grid-column:1;grid-row:1;gap:32px;justify-self:center;font-size:13px}
+  .site-header nav a{display:flex;align-items:center;min-height:44px;padding:8px 2px}
+  .site-header .wordmark{grid-column:1;grid-row:2;font-size:19px;gap:8px}
+  .wordmark span{font-size:20px}
+  .gallery-tools{height:58px;padding:0 var(--gutter)}
+  .index{gap:2px;justify-content:center}
+  .index a{width:30px;min-height:44px}.index a[aria-current="true"]{width:34px}
+  .gallery-progress{margin:0 var(--gutter) 12px}
+  .gallery{padding-top:0;padding-bottom:12px}
+  .panel{margin-bottom:28px;scroll-margin-top:122px}
+  .panel-label{font-size:9px;line-height:1.5;gap:12px;margin-bottom:10px}
+  .panel-label span:last-child{text-align:right}
+  .surface{padding:28px 24px;min-height:560px;gap:30px}
+  .intro-surface{min-height:610px;gap:36px}
+  .hero-eyebrow{font-size:9px;line-height:1.6;letter-spacing:.08em;margin-bottom:24px}
+  .intro h1{font-size:clamp(34px,9.1vw,54px);line-height:1.07}
+  .hero-description{max-width:100%;font-size:14px;line-height:1.7;margin:24px 0}
+  .hero-actions{gap:12px 22px}.hero-actions a{min-height:46px}.hero-primary{padding:14px 16px}
+  .intro-orb{width:86%;right:-63%;top:31%;opacity:.7}
+  .intro-bottom{align-items:flex-end;gap:16px}.hero-disciplines{max-width:100%;font-size:10px;gap:8px;line-height:1.7}
+  .hero-disciplines span+span:before{margin-right:8px}
+  .project-heading h2{font-size:clamp(40px,12vw,58px)}
+  .project-heading p{font-size:13px;line-height:1.6;margin-top:14px}
+  .project-info>p{font-size:14px;line-height:1.7;margin-bottom:20px}
+  .project-foot{flex-wrap:wrap;gap:10px 16px;font-size:11px;padding-top:14px}
+  .project-foot>span{max-width:100%}.project-foot a{display:inline-flex;align-items:center;min-height:44px}
+  .heal-art{height:215px}.order-art{height:245px}.temple-art{width:260px;max-width:95%;margin:16px 0}
+  .people-art{gap:8px;max-width:100%}.people-art i{width:clamp(36px,10vw,48px)}
+  .people-art i:before{width:32px;height:32px;left:calc(50% - 16px)}
+  .about-surface{height:auto;min-height:0;gap:28px}
+  .about h2{font-size:clamp(29px,8vw,40px)}
+  .about-details{flex:none;overflow:visible;padding:0;gap:24px}
+  .resume-row{grid-template-columns:1fr;gap:10px;padding-top:18px}
+  .resume-row>span{font-size:10px;letter-spacing:.04em}.resume-row h3{font-size:16px;line-height:1.4}.resume-row p{font-size:13px;line-height:1.7}
+  .resume-link{min-height:44px;display:inline-flex;align-items:center;margin-top:4px;font-size:12px}
+  .about-scroll{display:none}
+  .contact-surface{min-height:490px;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto 1fr auto;gap:24px 12px}
+  .contact-top-left{grid-area:1/1}.contact-top-right{grid-area:1/2;align-items:flex-end}
+  .contact-email-area{grid-area:2/1/3/3;padding:28px 0}
+  .contact-bottom-left{grid-area:3/1}.contact-bottom-right{grid-area:3/2;align-items:flex-end}
+  .contact-social{font-size:clamp(20px,5.4vw,29px);min-height:44px;display:inline-flex;align-items:center;white-space:normal}
+  .contact-email{font-size:clamp(40px,12vw,64px);min-height:64px}
+  .site-footer{display:none}
+}
