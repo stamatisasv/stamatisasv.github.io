@@ -81,12 +81,11 @@ gallery?.addEventListener('scroll', scheduleUpdate, { passive: true });
 window.addEventListener('scroll', scheduleUpdate, { passive: true });
 window.addEventListener('resize', scheduleUpdate);
 updatePosition();
-// Configure these once the profile URLs and CV file are available.
+// Place your PDF at assets/stamatis-asvestas-cv.pdf to enable the CV download.
 const contactLinks = {
-    instagram: '',
-    behance: '',
-    linkedin: '',
-    cv: '',
+    instagram: 'https://www.instagram.com/stamatis.asv/',
+    linkedin: 'https://www.linkedin.com/in/stamatis-asvestas-7791b1438/',
+    cv: 'assets/CVAsvestas.pdf',
 };
 document.querySelectorAll('[data-contact]').forEach(link => {
     const url = contactLinks[link.dataset.contact || ''];
