@@ -135,3 +135,18 @@ if (emailButton && emailAddress && email) {
         }
     });
 }
+const aboutDetails = document.querySelector('.about-details');
+const aboutScroll = document.querySelector('.about-scroll');
+if (aboutDetails && aboutScroll) {
+    const updateAboutScroll = () => {
+        const atBottom = aboutDetails.scrollTop + aboutDetails.clientHeight >= aboutDetails.scrollHeight - 2;
+        aboutScroll.disabled = atBottom;
+        aboutScroll.innerHTML = atBottom ? 'All caught up <span aria-hidden="true">✓</span>' : 'Scroll down <span aria-hidden="true">↓</span>';
+    };
+    aboutScroll.addEventListener('click', () => {
+        aboutDetails.scrollBy({ top: aboutDetails.clientHeight * 0.65, behavior: reducedMotion.matches ? 'instant' : 'smooth' });
+    });
+    aboutDetails.addEventListener('scroll', updateAboutScroll, { passive: true });
+    new ResizeObserver(updateAboutScroll).observe(aboutDetails);
+    updateAboutScroll();
+}

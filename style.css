@@ -25,3 +25,15 @@
 .contact-surface :focus-visible{outline-color:var(--cream)}
 @media(max-width:600px){.contact-surface{min-height:600px;padding:24px;gap:20px;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto 1fr auto auto}.contact-top-left{grid-area:1/1}.contact-top-right{grid-area:2/1;align-items:flex-start}.contact-email-area{grid-area:3/1;padding:24px 0}.contact-bottom-left{grid-area:4/1}.contact-bottom-right{grid-area:5/1;align-items:flex-start}.contact-social{font-size:clamp(28px,7vw,36px)}.contact-email{font-size:clamp(17px,4.8vw,29px)}.contact-corner{gap:14px}}
 @media(prefers-reduced-motion:reduce){.email-roll{transition:none}}
+
+/* Background details scroll within the slide, with a visible cue. */
+.about-surface{overflow:hidden}
+.about-surface>h2{flex-shrink:0}
+.about-details{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:20px;padding:0 14px 8px 0;scrollbar-width:thin;scrollbar-color:#18308560 transparent}
+.about-details>*{flex-shrink:0}
+.resume-link{display:inline-block;margin-top:10px;font-size:12px;text-decoration:underline;text-underline-offset:4px}
+.about-scroll{flex-shrink:0;align-self:flex-end;display:flex;align-items:center;gap:16px;border:0;border-top:1px solid #18308530;padding:12px 0 0;background:transparent;color:var(--blue);font-size:11px;cursor:pointer}
+.about-scroll span{font-size:20px}
+.about-scroll:disabled{opacity:.55;cursor:default}
+.about-details:focus-visible{outline:2px solid var(--blue);outline-offset:4px}
+@media(max-width:600px){.about-surface{height:620px;min-height:620px;overflow:hidden}.about-details{gap:22px;padding-right:10px}}
