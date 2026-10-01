@@ -90,3 +90,13 @@
 .panel.is-visible .people-art i:nth-child(2){animation-delay:.08s}.panel.is-visible .people-art i:nth-child(3){animation-delay:.16s}.panel.is-visible .people-art i:nth-child(4){animation-delay:.24s}
 @keyframes person-rise{from{opacity:0;translate:0 30px}to{opacity:1;translate:0 0}}
 @media(prefers-reduced-motion:reduce){.intro-surface{transform:none;border-radius:0}.intro-orb{scale:1}.heal-art,.order-art,.temple-art,.people-art{translate:none}}
+
+/* Center navigation independently of the name and location. */
+.site-header{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);column-gap:24px}
+.site-header .wordmark{justify-self:start}
+.site-header nav{justify-self:center;justify-content:center;width:auto}
+.site-header .location{justify-self:end}
+.gallery-tools{justify-content:center;height:52px}
+.site-footer{justify-content:flex-end}
+@media(max-width:900px){.site-header{grid-template-columns:minmax(0,1fr);height:auto;min-height:110px;row-gap:14px;padding-top:20px;padding-bottom:16px}.site-header nav{grid-row:2;gap:32px}.site-header .wordmark{grid-row:1}}
+@media(max-width:600px){.gallery-tools{height:48px}.site-footer{display:none}}
