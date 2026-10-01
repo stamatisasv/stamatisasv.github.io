@@ -33,6 +33,14 @@ function updatePosition() {
     if (index === current) marker.setAttribute('aria-current', 'true');
     else marker.removeAttribute('aria-current');
   });
+  document.documentElement.style.setProperty('--gallery-progress', String((current + 1) / panels.length));
+  document.querySelectorAll<HTMLAnchorElement>('.site-header nav a').forEach(link => {
+    const section = panels[current]?.id;
+    const destination = link.getAttribute('href');
+    const active = destination === `#${section}` || (destination === '#heal-in' && ['heal-in', 'orderit', 'kabeirion', 'employee'].includes(section));
+    if (active) link.setAttribute('aria-current', 'location');
+    else link.removeAttribute('aria-current');
+  });
   if (previous) previous.disabled = current === 0;
   if (next) next.disabled = current === panels.length - 1;
   if (position) position.textContent = `${String(current + 1).padStart(2, '0')} / ${String(panels.length).padStart(2, '0')}`;
@@ -135,3 +143,23 @@ if (aboutDetails && aboutScroll) {
   new ResizeObserver(updateAboutScroll).observe(aboutDetails);
   updateAboutScroll();
 }
+
+
+// Replay a gentle entrance only when a panel comes into view.
+const panelObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => entry.target.classList.toggle('is-visible', entry.isIntersecting));
+}, { threshold: 0.2 });
+panels.forEach(panel => panelObserver.observe(panel));
+
+const introSurface = document.querySelector<HTMLElement>('.intro-surface');
+const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+introSurface?.addEventListener('pointermove', event => {
+  if (reducedMotion.matches || !finePointer.matches) return;
+  const rect = introSurface.getBoundingClientRect();
+  introSurface.style.setProperty('--orb-x', `${((event.clientX - rect.left) / rect.width - 0.5) * 24}px`);
+  introSurface.style.setProperty('--orb-y', `${((event.clientY - rect.top) / rect.height - 0.5) * 24}px`);
+});
+introSurface?.addEventListener('pointerleave', () => {
+  introSurface.style.setProperty('--orb-x', '0px');
+  introSurface.style.setProperty('--orb-y', '0px');
+});
