@@ -146,19 +146,3 @@
   .contact-email{font-size:clamp(40px,12vw,64px);min-height:64px}
   .site-footer{display:none}
 }
-
-/* Heal In explains the product through its booking flow. */
-.heal-surface{gap:24px}
-.heal-preview{position:relative;z-index:1;background:var(--paper);color:var(--blue);padding:24px 28px;border-radius:8px;translate:0 var(--art-shift,0px);transition:translate .25s ease-out;box-shadow:0 12px 32px #07134325}
-.heal-preview-top{display:flex;justify-content:space-between;align-items:center;font-size:9px;letter-spacing:.12em;color:var(--muted)}
-.heal-preview-top>span:last-child{font-size:20px;color:var(--red)}
-.heal-preview h3{font-size:clamp(22px,2.4vw,32px);font-weight:400;letter-spacing:-.035em;line-height:1.15;margin:12px 0 22px}
-.heal-flow{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-.heal-flow li{border-top:1px solid #18308525;padding-top:12px;display:flex;gap:10px}
-.heal-step{font-size:10px;color:var(--red);padding-top:2px}
-.heal-flow h4{font-size:13px;font-weight:500;line-height:1.4;margin:0 0 5px}
-.heal-flow p{font-size:11px;line-height:1.5;margin:0;color:var(--muted)}
-.heal-features{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
-.heal-features span{font-size:9px;padding:7px 10px;border:1px solid #18308520;border-radius:20px}
-@media(max-width:600px){.heal-surface{height:auto;min-height:0;gap:28px}.heal-preview{padding:22px 18px}.heal-preview h3{font-size:26px;margin-bottom:20px}.heal-flow{grid-template-columns:1fr;gap:14px}.heal-flow h4{font-size:14px}.heal-flow p{font-size:12px}.heal-step{font-size:11px}.heal-features{gap:6px;margin-top:20px}.heal-features span{font-size:9px}.heal-preview{translate:none}}
-@media(prefers-reduced-motion:reduce){.heal-preview{translate:none}}
