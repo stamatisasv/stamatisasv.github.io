@@ -85,7 +85,7 @@ function scheduleUpdate() {
     if (scheduled)
         return;
     scheduled = true;
-    requestAnimationFrame(() => { updatePosition(); scheduled = false; });
+    requestAnimationFrame(() => { updatePosition(); updateScrollMotion(); scheduled = false; });
 }
 gallery?.addEventListener('scroll', scheduleUpdate, { passive: true });
 window.addEventListener('scroll', scheduleUpdate, { passive: true });
@@ -178,3 +178,25 @@ introSurface?.addEventListener('pointerleave', () => {
     introSurface.style.setProperty('--orb-x', '0px');
     introSurface.style.setProperty('--orb-y', '0px');
 });
+// Scroll changes visual scale without changing layout or intercepting gestures.
+function updateScrollMotion() {
+    const intro = panels[0]?.querySelector('.intro-surface');
+    if (!intro)
+        return;
+    const travel = Math.max(window.scrollY, mobile.matches ? 0 : (gallery?.scrollLeft || 0));
+    const progress = reducedMotion.matches ? 1 : Math.min(1, Math.max(0, travel / Math.min(window.innerHeight * 0.4, 240)));
+    intro.style.setProperty('--intro-scale', String(0.94 + progress * 0.06));
+    intro.style.setProperty('--intro-radius', `${(1 - progress) * 24}px`);
+    intro.style.setProperty('--orb-scale', String(1 + progress * 0.22));
+    panels.forEach(panel => {
+        const rect = panel.getBoundingClientRect();
+        const distance = mobile.matches
+            ? (rect.top + rect.height / 2 - window.innerHeight / 2) / window.innerHeight
+            : (rect.left + rect.width / 2 - window.innerWidth / 2) / window.innerWidth;
+        const shift = reducedMotion.matches ? 0 : Math.max(-24, Math.min(24, distance * 32));
+        panel.style.setProperty('--art-shift', `${shift}px`);
+    });
+}
+reducedMotion.addEventListener('change', scheduleUpdate);
+mobile.addEventListener('change', scheduleUpdate);
+updateScrollMotion();

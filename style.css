@@ -76,3 +76,17 @@
 @keyframes orb-turn{to{transform:rotate(360deg)}}
 @media(max-width:900px){.intro h1{font-size:clamp(48px,7.5vw,70px)}.hero-description{max-width:380px}.hero-next{display:none}}
 @media(max-width:600px){.site-header{height:auto;min-height:100px;flex-wrap:wrap;gap:12px;padding-top:20px;padding-bottom:16px}.wordmark{font-size:23px}.wordmark span{font-size:21px}.site-header nav{width:100%;justify-content:space-between;gap:20px}.gallery-tools{height:68px}.intro-surface{padding:28px 24px;min-height:610px}.hero-eyebrow{font-size:9px;margin-bottom:28px}.intro h1{font-size:clamp(37px,9.5vw,57px)}.hero-description{font-size:14px;max-width:90%;margin:24px 0}.hero-actions{gap:20px}.hero-primary{padding:14px 16px;gap:20px}.intro-orb{width:85%;right:-55%;top:38%;opacity:.85}.orb-center{font-size:150px}.hero-disciplines{gap:10px;max-width:230px;line-height:1.8}.hero-disciplines span+span:before{margin-right:10px}.gallery-progress{margin-bottom:8px}}
+
+/* The first card opens up as the visitor scrolls; artwork follows the gallery. */
+.intro-surface{transform:scale(var(--intro-scale,1));transform-origin:center top;border-radius:var(--intro-radius,0);transition:transform .18s ease-out,border-radius .18s ease-out}
+.intro-orb{scale:var(--orb-scale,1);transition:transform .7s ease-out,scale .25s ease-out}
+.heal-art,.order-art,.temple-art,.people-art{translate:0 var(--art-shift,0px);transition:translate .25s ease-out,transform .5s}
+.panel.is-visible .project-heading{animation:content-arrive .8s both}
+.panel.is-visible .project-info{animation:content-arrive .8s .16s both}
+.panel.is-visible .contact-corner{animation:content-arrive .65s both}
+.panel.is-visible .contact-bottom-left,.panel.is-visible .contact-bottom-right{animation-delay:.15s}
+.panel.is-visible .contact-email-area{animation:content-arrive .8s .08s both}
+.panel.is-visible .people-art i{animation:person-rise .7s both}
+.panel.is-visible .people-art i:nth-child(2){animation-delay:.08s}.panel.is-visible .people-art i:nth-child(3){animation-delay:.16s}.panel.is-visible .people-art i:nth-child(4){animation-delay:.24s}
+@keyframes person-rise{from{opacity:0;translate:0 30px}to{opacity:1;translate:0 0}}
+@media(prefers-reduced-motion:reduce){.intro-surface{transform:none;border-radius:0}.intro-orb{scale:1}.heal-art,.order-art,.temple-art,.people-art{translate:none}}
