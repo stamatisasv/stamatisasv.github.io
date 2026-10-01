@@ -86,7 +86,30 @@
 
     <section class="panel contact" id="contact" aria-labelledby="contact-heading">
       <div class="panel-label"><span>07 / Next chapter</span><span>Let’s make something useful</span></div>
-      <div class="surface contact-surface"><span class="contact-star" aria-hidden="true">✳</span><h2 id="contact-heading">Good things<br>start with<br><em>a conversation.</em></h2><div class="contact-bottom"><p>Have a project, an opportunity,<br>or an idea in mind?</p><a href="https://github.com/stamatisasv" target="_blank" rel="noopener noreferrer">Find me on GitHub <span>↗</span></a></div></div>
+      <div class="surface contact-surface">
+        <h2 id="contact-heading" class="visually-hidden">Get in touch</h2>
+        <div class="contact-corner contact-top-left">
+          <a class="contact-social" data-contact="instagram" aria-disabled="true">Instagram ↗</a>
+          <a class="contact-social" href="https://github.com/stamatisasv" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+        </div>
+        <div class="contact-corner contact-top-right">
+          <a class="contact-social" data-contact="behance" aria-disabled="true">BeHance ↗</a>
+        </div>
+        <div class="contact-email-area">
+          <!-- Add your real email to data-email; the button label updates automatically. -->
+          <button class="contact-email" type="button" data-email="" disabled aria-label="Email address not yet configured">
+            <span class="email-window" aria-hidden="true"><span class="email-roll"><span class="email-address">Email</span><span>Copied</span></span></span>
+          </button>
+          <p class="email-hint">Let’s start a conversation.</p>
+          <p class="visually-hidden" id="copy-status" role="status" aria-live="polite"></p>
+        </div>
+        <div class="contact-corner contact-bottom-left">
+          <a class="contact-social" data-contact="linkedin" aria-disabled="true">LinkedIn ↗</a>
+        </div>
+        <div class="contact-corner contact-bottom-right">
+          <a class="contact-social" data-contact="cv" download aria-disabled="true">Download CV ↓</a>
+        </div>
+      </div>
     </section>
   </main>
 

@@ -69,3 +69,58 @@ gallery?.addEventListener('scroll', scheduleUpdate, { passive: true });
 window.addEventListener('scroll', scheduleUpdate, { passive: true });
 window.addEventListener('resize', scheduleUpdate);
 updatePosition();
+
+// Configure these once the profile URLs and CV file are available.
+const contactLinks: Record<string, string> = {
+  instagram: '',
+  behance: '',
+  linkedin: '',
+  cv: '',
+};
+document.querySelectorAll<HTMLAnchorElement>('[data-contact]').forEach(link => {
+  const url = contactLinks[link.dataset.contact || ''];
+  if (!url) return;
+  link.href = url;
+  link.removeAttribute('aria-disabled');
+  if (link.dataset.contact !== 'cv') {
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+  }
+});
+
+const emailButton = document.querySelector<HTMLButtonElement>('.contact-email');
+const emailAddress = document.querySelector<HTMLElement>('.email-address');
+const copyStatus = document.querySelector<HTMLElement>('#copy-status');
+const email = emailButton?.dataset.email?.trim();
+let copyTimer: ReturnType<typeof setTimeout> | undefined;
+let copying = false;
+if (emailButton && emailAddress && email) {
+  emailAddress.textContent = email;
+  emailButton.disabled = false;
+  emailButton.setAttribute('aria-label', `Copy email address: ${email}`);
+  emailButton.addEventListener('click', async () => {
+    if (copying) return;
+    copying = true;
+    clearTimeout(copyTimer);
+    try {
+      await navigator.clipboard.writeText(email);
+      emailButton.classList.add('is-copied');
+      if (copyStatus) copyStatus.textContent = 'Email address copied to clipboard.';
+      copyTimer = setTimeout(() => {
+        emailButton.classList.remove('is-copied');
+        if (copyStatus) copyStatus.textContent = '';
+      }, 1800);
+    } catch {
+      emailButton.classList.remove('is-copied');
+      if (copyStatus) copyStatus.textContent = `Could not copy automatically. Email: ${email}`;
+      // Keep the address available for manual copying if clipboard access is denied.
+      const selection = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(emailAddress);
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+    } finally {
+      copying = false;
+    }
+  });
+}
