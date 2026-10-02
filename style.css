@@ -317,7 +317,7 @@ body{height:100dvh;display:flex;flex-direction:column;background:var(--paper)}
 .gallery .visual-content{flex:1;min-height:0;overflow-x:hidden;overflow-y:auto;padding:0 12px 0 0;overscroll-behavior-y:contain;scrollbar-gutter:stable;scrollbar-width:thin;touch-action:pan-x pan-y}
 .gallery .visual-note{flex-shrink:0;margin:0;padding-top:12px}
 .gallery .about h2{font-size:clamp(28px,4.8vh,48px);flex-shrink:0}
-.gallery .about-details{flex:1;min-height:0;overflow:visible;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;align-content:start;padding:0}
+.gallery .about-details{flex:1;min-height:0;overflow:visible;display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-content:start;padding:0}
 .gallery .resume-row{grid-template-columns:1fr;gap:10px;padding-top:16px}.gallery .about-details h3{font-size:15px}.gallery .about-details p{font-size:12px}
 .gallery .about-scroll{display:none}
 .gallery .contact-email{font-size:clamp(58px,9vw,120px)}
