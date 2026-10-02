@@ -357,3 +357,8 @@ body{height:100dvh;display:flex;flex-direction:column;background:var(--paper)}
 .gallery>.panel>.surface{flex:1 1 0;min-height:0;height:auto}
 .gallery .temple-art{display:grid;place-items:center;flex:1 1 0;width:100%;height:auto;min-height:0;max-height:260px;margin:0;translate:none;transform:none}
 .gallery .temple-art svg{display:block;width:100%;height:100%;max-width:480px;max-height:260px;overflow:visible}
+
+.visual-footer{display:flex;flex-shrink:0;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px 24px;border-top:1px solid #18308530;padding-top:12px}
+.gallery .visual-footer .visual-note{border:0;padding:0}
+.visual-profile-links{display:flex;align-items:center;gap:20px;font-size:11px}
+.visual-profile-links a{padding:5px 0}.visual-profile-links a:hover{color:var(--red);text-decoration:underline;text-underline-offset:4px}
