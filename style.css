@@ -363,3 +363,7 @@ body{height:100dvh;display:flex;flex-direction:column;background:var(--paper)}
 .gallery .visual-footer .visual-note{border:0;padding:0}
 .visual-profile-links{display:flex;align-items:center;gap:20px;font-size:11px}
 .visual-profile-links a{padding:5px 0}.visual-profile-links a:hover{color:var(--red);text-decoration:underline;text-underline-offset:4px}
+
+/* Visual Work films are passive, muted previews. */
+#visual-work video{pointer-events:none}
+#visual-work video::-webkit-media-controls{display:none!important}

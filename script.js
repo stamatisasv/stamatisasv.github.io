@@ -222,8 +222,7 @@ function syncPreviews() {
             video.muted = true;
             if (video.paused)
                 void video.play().catch(() => {
-                    // Keep native playback available if a browser blocks automatic previews.
-                    video.controls = true;
+                    // Leave the poster visible if automatic playback is blocked.
                 });
         }
         else
@@ -243,6 +242,8 @@ const previewObserver = new IntersectionObserver(entries => {
 previewVideos.forEach(video => {
     video.muted = true;
     video.defaultMuted = true;
+    video.controls = false;
+    video.addEventListener('contextmenu', event => event.preventDefault());
     previewObserver.observe(video);
 });
 document.addEventListener('visibilitychange', syncPreviews);
