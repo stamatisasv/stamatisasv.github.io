@@ -1,15 +1,17 @@
-# Visual Work photos
+# Visual work
 
-Add the five account images here:
+The responsive, filterable project grid in `index.html` groups the current originals in `assets/Portofolio/` into 11 projects. Filenames are URL-encoded, including spaces and `#`.
 
-- dumbos.jpg (9:16)
-- shisha-nomads.jpg (4:5)
-- skincarelab.jpg (4:5)
-- meli-lemnou.jpg (9:16)
-- reborn.jpg (4:5)
+- Dumbos: programme, two announcements, and elephant logo.
+- Shisha Nomads: two product photographs.
+- Skin Care Lab: dermabrasion, summer treatments, mesotherapy artwork, and video.
+- Meli Lemnou / Meli Bontelas: honey photography and both English brochure pages.
+- Reborn Music Lemnos: two event previews.
+- Music: CYPHER, Ase me mono (with four production polaroids), Gia panta, Long press, and Ftera by Lynux.
+- Wedding film: `gamos.mp4` (Regino and Margarita, identified from its title frame).
 
-Add seven video stills: music-video-01.jpg through music-video-07.jpg (16:9).
+Optimized JPEG images and extracted video posters live in `previews/grid/`. The site loads these instead of the large source images. Videos retain the user's smaller MP4 previews, use native controls, and load only on demand. Supporting media is available in each card's expandable gallery. Filters preserve keyboard access, announce the project count, and pause hidden previews. Only one video plays at a time.
 
-In index.html, each media slot has a comment with its ready-to-use image tag. Replace the media-placeholder div with that image tag. Keep the figure and caption. Other image extensions work if you update the path.
+Run `npm run build` after editing `script.ts` to regenerate `script.js`. Run `npm run check` for TypeScript validation. The complete grid remains available without JavaScript.
 
-Replace YEAR, PROJECT NAME, and ARTIST NAME with real details. For each music-video caption, replace the disabled Watch video span with an anchor to that individual video, using target="_blank" and rel="noopener noreferrer". The existing playlist link is already active.
+Mona Lisa and the unnamed seventh music clip remain omitted because no matching media or details are available.

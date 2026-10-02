@@ -12,28 +12,21 @@ function goToPanel(index: number) {
   const panel = panels[index];
   if (!panel || !gallery) return;
   const behavior = reducedMotion.matches ? 'instant' : 'smooth';
-  if (mobile.matches) {
-    panel.scrollIntoView({ behavior, block: 'start' });
-  } else {
-    const inset = parseFloat(getComputedStyle(gallery).scrollPaddingLeft) || 0;
-    gallery.scrollTo({ left: gallery.scrollLeft + panel.getBoundingClientRect().left - gallery.getBoundingClientRect().left - inset, behavior });
-  }
+  panel.scrollIntoView({ behavior, block: 'start' });
 }
 
 function updatePosition() {
   if (!gallery) return;
-  const inset = mobile.matches ? ((document.querySelector<HTMLElement>('.site-header')?.getBoundingClientRect().height || 108) + 14) : (parseFloat(getComputedStyle(gallery).scrollPaddingLeft) || 0);
-  let closest = Infinity;
+  const inset = (document.querySelector<HTMLElement>('.site-header')?.getBoundingClientRect().height || 100) + 24;
+  current = 0;
   panels.forEach((panel, index) => {
-    const rect = panel.getBoundingClientRect();
-    const distance = Math.abs((mobile.matches ? rect.top : rect.left) - inset);
-    if (distance < closest) { closest = distance; current = index; }
+    if (panel.getBoundingClientRect().top <= inset + 60) current = index;
   });
   markers.forEach((marker, index) => {
     if (index === current) marker.setAttribute('aria-current', 'true');
     else marker.removeAttribute('aria-current');
   });
-  document.documentElement.style.setProperty('--gallery-progress', String((current + 1) / panels.length));
+  document.documentElement.style.setProperty('--gallery-progress', String(window.scrollY / Math.max(1, document.documentElement.scrollHeight - window.innerHeight)));
   document.querySelectorAll<HTMLAnchorElement>('.site-header nav a').forEach(link => {
     const section = panels[current]?.id;
     const destination = link.getAttribute('href');
@@ -148,8 +141,10 @@ if (aboutDetails && aboutScroll) {
 // Replay a gentle entrance only when a panel comes into view.
 const panelObserver = new IntersectionObserver(entries => {
   entries.forEach(entry => entry.target.classList.toggle('is-visible', entry.isIntersecting));
-}, { threshold: 0.2 });
+}, { threshold: 0, rootMargin: '0px 0px -40px 0px' });
 panels.forEach(panel => panelObserver.observe(panel));
+const stories = Array.from(document.querySelectorAll<HTMLElement>('.social-story, .music-story'));
+stories.forEach(story => panelObserver.observe(story));
 
 const introSurface = document.querySelector<HTMLElement>('.intro-surface');
 const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
@@ -169,20 +164,52 @@ introSurface?.addEventListener('pointerleave', () => {
 function updateScrollMotion() {
   const intro = panels[0]?.querySelector<HTMLElement>('.intro-surface');
   if (!intro) return;
-  const travel = Math.max(window.scrollY, mobile.matches ? 0 : (gallery?.scrollLeft || 0));
+  const travel = window.scrollY;
   const progress = reducedMotion.matches ? 1 : Math.min(1, Math.max(0, travel / Math.min(window.innerHeight * 0.4, 240)));
   intro.style.setProperty('--intro-scale', String(0.94 + progress * 0.06));
   intro.style.setProperty('--intro-radius', `${(1 - progress) * 24}px`);
   intro.style.setProperty('--orb-scale', String(1 + progress * 0.22));
-  panels.forEach(panel => {
+  [...panels, ...stories].forEach(panel => {
     const rect = panel.getBoundingClientRect();
-    const distance = mobile.matches
-      ? (rect.top + rect.height / 2 - window.innerHeight / 2) / window.innerHeight
-      : (rect.left + rect.width / 2 - window.innerWidth / 2) / window.innerWidth;
+    const distance = (rect.top + rect.height / 2 - window.innerHeight / 2) / window.innerHeight;
     const shift = reducedMotion.matches ? 0 : Math.max(-24, Math.min(24, distance * 32));
     panel.style.setProperty('--art-shift', `${shift}px`);
+    panel.style.setProperty('--collage-shift', `${mobile.matches ? 0 : shift * 0.6}px`);
+    if (rect.bottom < 0 || rect.top > window.innerHeight) {
+      panel.querySelectorAll('video').forEach(video => { if (!video.paused) video.pause(); });
+    }
   });
 }
 reducedMotion.addEventListener('change', scheduleUpdate);
 mobile.addEventListener('change', scheduleUpdate);
 updateScrollMotion();
+
+// Filter existing cards so the complete collection also works without JavaScript.
+const projectFilters = document.querySelector<HTMLElement>('.project-filters');
+const projectCards = Array.from(document.querySelectorAll<HTMLElement>('.visual-project-card'));
+const projectCount = document.querySelector<HTMLElement>('.project-count');
+if (projectFilters && projectCards.length) {
+  projectFilters.hidden = false;
+  projectFilters.querySelectorAll<HTMLButtonElement>('button').forEach(button => {
+    button.addEventListener('click', () => {
+      const category = button.dataset.projectFilter;
+      let visible = 0;
+      projectCards.forEach(card => {
+        card.hidden = category !== 'all' && card.dataset.category !== category;
+        if (card.hidden) card.querySelectorAll('video').forEach(video => video.pause());
+        else visible++;
+      });
+      projectFilters.querySelectorAll('button').forEach(filter => filter.setAttribute('aria-pressed', String(filter === button)));
+      if (projectCount) projectCount.textContent = `${visible} ${visible === 1 ? 'project' : 'projects'}`;
+      scheduleUpdate();
+    });
+  });
+}
+// Play one preview at a time, including the supporting films inside each card.
+document.querySelectorAll<HTMLVideoElement>('.project-grid video').forEach(video => {
+  video.addEventListener('play', () => {
+    document.querySelectorAll<HTMLVideoElement>('.project-grid video').forEach(other => {
+      if (other !== video) other.pause();
+    });
+  });
+});
