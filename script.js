@@ -13,24 +13,22 @@ function goToPanel(index) {
     if (!panel || !gallery)
         return;
     const behavior = reducedMotion.matches ? 'instant' : 'smooth';
-    panel.scrollIntoView({ behavior, block: 'start' });
+    const inset = parseFloat(getComputedStyle(gallery).paddingLeft) || 0;
+    gallery.scrollBy({ left: panel.getBoundingClientRect().left - gallery.getBoundingClientRect().left - inset, behavior });
 }
 function updatePosition() {
     if (!gallery)
         return;
-    const inset = (document.querySelector('.site-header')?.getBoundingClientRect().height || 100) + 24;
-    current = 0;
-    panels.forEach((panel, index) => {
-        if (panel.getBoundingClientRect().top <= inset + 60)
-            current = index;
-    });
+    const inset = parseFloat(getComputedStyle(gallery).paddingLeft) || 0;
+    const left = gallery.getBoundingClientRect().left + inset;
+    current = panels.reduce((closest, panel, index) => Math.abs(panel.getBoundingClientRect().left - left) < Math.abs(panels[closest].getBoundingClientRect().left - left) ? index : closest, 0);
     markers.forEach((marker, index) => {
         if (index === current)
             marker.setAttribute('aria-current', 'true');
         else
             marker.removeAttribute('aria-current');
     });
-    document.documentElement.style.setProperty('--gallery-progress', String(window.scrollY / Math.max(1, document.documentElement.scrollHeight - window.innerHeight)));
+    document.documentElement.style.setProperty('--gallery-progress', String(gallery.scrollLeft / Math.max(1, gallery.scrollWidth - gallery.clientWidth)));
     document.querySelectorAll('.site-header nav a').forEach(link => {
         const section = panels[current]?.id;
         const destination = link.getAttribute('href');
@@ -63,7 +61,7 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
 previous?.addEventListener('click', () => goToPanel(current - 1));
 next?.addEventListener('click', () => goToPanel(current + 1));
 gallery?.addEventListener('keydown', event => {
-    if (mobile.matches || event.target !== gallery)
+    if (event.target !== gallery && !panels.includes(event.target))
         return;
     if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
         event.preventDefault();
@@ -75,11 +73,27 @@ function scheduleUpdate() {
     if (scheduled)
         return;
     scheduled = true;
-    requestAnimationFrame(() => { updatePosition(); updateScrollMotion(); scheduled = false; });
+    requestAnimationFrame(() => { scheduled = false; updatePosition(); updateScrollMotion(); });
 }
+gallery?.addEventListener('scroll', updatePosition, { passive: true });
 gallery?.addEventListener('scroll', scheduleUpdate, { passive: true });
+document.addEventListener('scroll', scheduleUpdate, { passive: true, capture: true });
+// A mouse wheel moves between sections; the project collection keeps vertical gestures.
+gallery?.addEventListener('wheel', event => {
+    if (event.ctrlKey || Math.abs(event.deltaX) >= Math.abs(event.deltaY))
+        return;
+    const target = event.target instanceof Element ? event.target : null;
+    if (target?.closest('.visual-content'))
+        return;
+    event.preventDefault();
+    const unit = event.deltaMode === WheelEvent.DOM_DELTA_LINE ? 16 : event.deltaMode === WheelEvent.DOM_DELTA_PAGE ? gallery.clientWidth : 1;
+    gallery.scrollLeft += event.deltaY * unit;
+}, { passive: false });
+document.querySelector('.visual-content')?.addEventListener('scroll', scheduleUpdate, { passive: true });
 window.addEventListener('scroll', scheduleUpdate, { passive: true });
 window.addEventListener('resize', scheduleUpdate);
+window.addEventListener('pageshow', scheduleUpdate);
+window.addEventListener('hashchange', scheduleUpdate);
 updatePosition();
 // CV download uses the PDF in the assets folder.
 const contactLinks = {
@@ -175,18 +189,18 @@ function updateScrollMotion() {
     const intro = panels[0]?.querySelector('.intro-surface');
     if (!intro)
         return;
-    const travel = window.scrollY;
+    const travel = gallery?.scrollLeft || 0;
     const progress = reducedMotion.matches ? 1 : Math.min(1, Math.max(0, travel / Math.min(window.innerHeight * 0.4, 240)));
     intro.style.setProperty('--intro-scale', String(0.94 + progress * 0.06));
     intro.style.setProperty('--intro-radius', `${(1 - progress) * 24}px`);
     intro.style.setProperty('--orb-scale', String(1 + progress * 0.22));
     [...panels, ...stories].forEach(panel => {
         const rect = panel.getBoundingClientRect();
-        const distance = (rect.top + rect.height / 2 - window.innerHeight / 2) / window.innerHeight;
+        const distance = (rect.left + rect.width / 2 - window.innerWidth / 2) / window.innerWidth;
         const shift = reducedMotion.matches ? 0 : Math.max(-24, Math.min(24, distance * 32));
         panel.style.setProperty('--art-shift', `${shift}px`);
         panel.style.setProperty('--collage-shift', `${mobile.matches ? 0 : shift * 0.6}px`);
-        if (rect.bottom < 0 || rect.top > window.innerHeight) {
+        if (rect.right < 0 || rect.left > window.innerWidth || rect.bottom < 0 || rect.top > window.innerHeight) {
             panel.querySelectorAll('video').forEach(video => { if (!video.paused)
                 video.pause(); });
         }
@@ -195,36 +209,42 @@ function updateScrollMotion() {
 reducedMotion.addEventListener('change', scheduleUpdate);
 mobile.addEventListener('change', scheduleUpdate);
 updateScrollMotion();
-// Filter existing cards so the complete collection also works without JavaScript.
-const projectFilters = document.querySelector('.project-filters');
 const projectCards = Array.from(document.querySelectorAll('.visual-project-card'));
-const projectCount = document.querySelector('.project-count');
-if (projectFilters && projectCards.length) {
-    projectFilters.hidden = false;
-    projectFilters.querySelectorAll('button').forEach(button => {
-        button.addEventListener('click', () => {
-            const category = button.dataset.projectFilter;
-            let visible = 0;
-            projectCards.forEach(card => {
-                card.hidden = category !== 'all' && card.dataset.category !== category;
-                if (card.hidden)
-                    card.querySelectorAll('video').forEach(video => video.pause());
-                else
-                    visible++;
-            });
-            projectFilters.querySelectorAll('button').forEach(filter => filter.setAttribute('aria-pressed', String(filter === button)));
-            if (projectCount)
-                projectCount.textContent = `${visible} ${visible === 1 ? 'project' : 'projects'}`;
-            scheduleUpdate();
-        });
+// Muted films loop only while visible, including clipping by the inner scroller.
+const previewVideos = Array.from(document.querySelectorAll('.project-grid video'));
+const visiblePreviews = new Set();
+function syncPreviews() {
+    previewVideos.forEach(video => {
+        const card = video.closest('.visual-project-card');
+        const details = video.closest('details');
+        const shouldPlay = !document.hidden && visiblePreviews.has(video) && !card?.hidden && (!details || details.open);
+        if (shouldPlay) {
+            video.muted = true;
+            if (video.paused)
+                void video.play().catch(() => {
+                    // Keep native playback available if a browser blocks automatic previews.
+                    video.controls = true;
+                });
+        }
+        else
+            video.pause();
     });
 }
-// Play one preview at a time, including the supporting films inside each card.
-document.querySelectorAll('.project-grid video').forEach(video => {
-    video.addEventListener('play', () => {
-        document.querySelectorAll('.project-grid video').forEach(other => {
-            if (other !== video)
-                other.pause();
-        });
+const previewObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        const video = entry.target;
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.08)
+            visiblePreviews.add(video);
+        else
+            visiblePreviews.delete(video);
     });
+    syncPreviews();
+}, { threshold: [0, 0.08] });
+previewVideos.forEach(video => {
+    video.muted = true;
+    video.defaultMuted = true;
+    previewObserver.observe(video);
 });
+document.addEventListener('visibilitychange', syncPreviews);
+projectCards.forEach(card => card.querySelector('details')?.addEventListener('toggle', syncPreviews));
+syncPreviews();
