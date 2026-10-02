@@ -321,7 +321,8 @@ body{height:100dvh;display:flex;flex-direction:column;background:var(--paper)}
 .gallery .resume-row{grid-template-columns:1fr;gap:10px;padding-top:16px}.gallery .about-details h3{font-size:15px}.gallery .about-details p{font-size:12px}
 .gallery .about-scroll{display:none}
 .gallery .contact-email{font-size:clamp(58px,9vw,120px)}
-.gallery .contact-corner{max-width:45%}
+.gallery .contact-corner{width:100%;min-width:0;max-width:none}
+.gallery .contact-top-right,.gallery .contact-bottom-right{justify-self:end;align-items:flex-end;text-align:right}
 .site-footer{padding:8px var(--gutter) 16px;justify-content:center}
 .site-footer>div.gallery-controls:first-child{display:flex;flex-direction:row;align-items:center;gap:12px}
 
