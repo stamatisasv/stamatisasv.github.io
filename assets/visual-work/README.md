@@ -1,6 +1,6 @@
 # Visual work
 
-Project order begins with Reborn Music Lemnos, Shisha Nomads, Drivio, Dumbos, Skin Care Lab, and Meli Lemnou, followed by the music videos (Mona Lisa first) and wedding film.
+Project order begins with Reborn Music Lemnos, Shisha Nomads, Drivio, Skin Care Lab, Dumbos, and Meli Lemnou, followed by the music videos (Mona Lisa first) and wedding film.
 
 The responsive project grid in `index.html` groups the current originals in `assets/Portofolio/` into 13 projects. Filenames are URL-encoded, including spaces and `#`.
 

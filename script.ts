@@ -205,6 +205,18 @@ if (visualContent) {
   let revealed = false;
   let revealTimer: ReturnType<typeof setTimeout> | undefined;
   let revealFrame = 0;
+  const prepareReveal = () => {
+    if (revealed || reducedMotion.matches) return;
+    const firstMusic = visualContent.querySelector<HTMLElement>('[data-category="music"]');
+    if (!firstMusic) return;
+    const offset = firstMusic.getBoundingClientRect().top - visualContent.getBoundingClientRect().top + visualContent.scrollTop;
+    visualContent.scrollTop = Math.min(offset, visualContent.scrollHeight - visualContent.clientHeight);
+  };
+  prepareReveal();
+  const revealLayoutObserver = new ResizeObserver(prepareReveal);
+  const projectGrid = visualContent.querySelector('.project-grid');
+  if (projectGrid) revealLayoutObserver.observe(projectGrid);
+  revealLayoutObserver.observe(visualContent);
   const stopReveal = () => {
     revealed = true;
     clearTimeout(revealTimer);
@@ -223,17 +235,18 @@ if (visualContent) {
     if (revealed || reducedMotion.matches || document.hidden) return;
     clearTimeout(revealTimer);
     revealTimer = setTimeout(() => {
-      if (revealed || reducedMotion.matches || visualContent.scrollTop > 0) return;
-      const bottom = visualContent.scrollHeight - visualContent.clientHeight;
-      if (bottom <= 0) return;
+      if (revealed || reducedMotion.matches) return;
+      prepareReveal();
+      const startOffset = visualContent.scrollTop;
+      if (startOffset <= 0) return;
       revealed = true;
-      visualContent.scrollTop = bottom;
+      revealLayoutObserver.disconnect();
       let start: number | undefined;
       const reveal = (now: number) => {
         start ??= now;
         const progress = Math.min(1, Math.max(0, (now - start - 180) / 2200));
         // Ease out as the first projects return into view.
-        visualContent.scrollTop = bottom * Math.pow(1 - progress, 3);
+        visualContent.scrollTop = startOffset * Math.pow(1 - progress, 3);
         if (progress < 1) revealFrame = requestAnimationFrame(reveal);
       };
       revealFrame = requestAnimationFrame(reveal);

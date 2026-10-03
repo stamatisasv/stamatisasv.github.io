@@ -380,3 +380,4 @@ body{height:100dvh;display:flex;flex-direction:column;background:var(--paper)}
 
 .visual-scroll-hint{display:block;margin-top:8px;color:var(--blue);font-size:11px;letter-spacing:.03em}
 .visual-scroll-hint>span{display:inline-block;margin-left:4px}
+.project-cover-natural video{aspect-ratio:auto;object-fit:contain;background:#111}
