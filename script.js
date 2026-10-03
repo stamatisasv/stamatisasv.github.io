@@ -210,6 +210,62 @@ reducedMotion.addEventListener('change', scheduleUpdate);
 mobile.addEventListener('change', scheduleUpdate);
 updateScrollMotion();
 const projectCards = Array.from(document.querySelectorAll('.visual-project-card'));
+// Reveal the depth of the collection once, then leave scrolling to the visitor.
+const visualContent = document.querySelector('.visual-content');
+if (visualContent) {
+    let revealed = false;
+    let revealTimer;
+    let revealFrame = 0;
+    const stopReveal = () => {
+        revealed = true;
+        clearTimeout(revealTimer);
+        cancelAnimationFrame(revealFrame);
+    };
+    ['pointerdown', 'touchstart', 'wheel', 'keydown'].forEach(type => {
+        visualContent.addEventListener(type, stopReveal, { passive: true });
+    });
+    const revealObserver = new IntersectionObserver(entries => {
+        const visible = entries.some(entry => entry.isIntersecting && entry.intersectionRatio >= 0.65);
+        if (!visible) {
+            clearTimeout(revealTimer);
+            cancelAnimationFrame(revealFrame);
+            return;
+        }
+        if (revealed || reducedMotion.matches || document.hidden)
+            return;
+        clearTimeout(revealTimer);
+        revealTimer = setTimeout(() => {
+            if (revealed || reducedMotion.matches || visualContent.scrollTop > 0)
+                return;
+            const bottom = visualContent.scrollHeight - visualContent.clientHeight;
+            if (bottom <= 0)
+                return;
+            revealed = true;
+            visualContent.scrollTop = bottom;
+            let start;
+            const reveal = (now) => {
+                start ?? (start = now);
+                const progress = Math.min(1, Math.max(0, (now - start - 180) / 2200));
+                // Ease out as the first projects return into view.
+                visualContent.scrollTop = bottom * Math.pow(1 - progress, 3);
+                if (progress < 1)
+                    revealFrame = requestAnimationFrame(reveal);
+            };
+            revealFrame = requestAnimationFrame(reveal);
+        }, 300);
+    }, { threshold: [0, 0.65] });
+    revealObserver.observe(visualContent);
+    reducedMotion.addEventListener('change', () => {
+        if (reducedMotion.matches)
+            stopReveal();
+    });
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            clearTimeout(revealTimer);
+            cancelAnimationFrame(revealFrame);
+        }
+    });
+}
 // Muted films loop only while visible, including clipping by the inner scroller.
 const previewVideos = Array.from(document.querySelectorAll('.project-grid video'));
 const visiblePreviews = new Set();
