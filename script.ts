@@ -30,7 +30,7 @@ function updatePosition() {
   document.querySelectorAll<HTMLAnchorElement>('.site-header nav a').forEach(link => {
     const section = panels[current]?.id;
     const destination = link.getAttribute('href');
-    const active = destination === `#${section}` || (destination === '#heal-in' && ['heal-in', 'kabeirion', 'orderit', 'employee', 'visual-work'].includes(section));
+    const active = destination === `#${section}` || (destination === '#heal-in' && ['heal-in', 'kaveirion', 'orderit', 'employee', 'visual-work'].includes(section));
     if (active) link.setAttribute('aria-current', 'location');
     else link.removeAttribute('aria-current');
   });
