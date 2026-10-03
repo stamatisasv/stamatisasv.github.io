@@ -13,15 +13,19 @@ function goToPanel(index) {
     if (!panel || !gallery)
         return;
     const behavior = reducedMotion.matches ? 'instant' : 'smooth';
-    const inset = parseFloat(getComputedStyle(gallery).paddingLeft) || 0;
-    gallery.scrollBy({ left: panel.getBoundingClientRect().left - gallery.getBoundingClientRect().left - inset, behavior });
+    const frame = gallery.getBoundingClientRect();
+    const rect = panel.getBoundingClientRect();
+    gallery.scrollBy({ left: rect.left + rect.width / 2 - (frame.left + gallery.clientWidth / 2), behavior });
 }
 function updatePosition() {
     if (!gallery)
         return;
-    const inset = parseFloat(getComputedStyle(gallery).paddingLeft) || 0;
-    const left = gallery.getBoundingClientRect().left + inset;
-    current = panels.reduce((closest, panel, index) => Math.abs(panel.getBoundingClientRect().left - left) < Math.abs(panels[closest].getBoundingClientRect().left - left) ? index : closest, 0);
+    const center = gallery.getBoundingClientRect().left + gallery.clientWidth / 2;
+    const distance = (panel) => {
+        const rect = panel.getBoundingClientRect();
+        return Math.abs(rect.left + rect.width / 2 - center);
+    };
+    current = panels.reduce((closest, panel, index) => distance(panel) < distance(panels[closest]) ? index : closest, 0);
     markers.forEach((marker, index) => {
         if (index === current)
             marker.setAttribute('aria-current', 'true');
@@ -79,6 +83,7 @@ gallery?.addEventListener('scroll', updatePosition, { passive: true });
 gallery?.addEventListener('scroll', scheduleUpdate, { passive: true });
 document.addEventListener('scroll', scheduleUpdate, { passive: true, capture: true });
 // A mouse wheel moves between sections; the project collection keeps vertical gestures.
+let wheelSnapTimer;
 gallery?.addEventListener('wheel', event => {
     if (event.ctrlKey || Math.abs(event.deltaX) >= Math.abs(event.deltaY))
         return;
@@ -86,8 +91,16 @@ gallery?.addEventListener('wheel', event => {
     if (target?.closest('.visual-content'))
         return;
     event.preventDefault();
+    // Let a continuous wheel gesture travel freely, then magnetize its resting point.
+    clearTimeout(wheelSnapTimer);
+    gallery.style.scrollSnapType = 'none';
     const unit = event.deltaMode === WheelEvent.DOM_DELTA_LINE ? 16 : event.deltaMode === WheelEvent.DOM_DELTA_PAGE ? gallery.clientWidth : 1;
     gallery.scrollLeft += event.deltaY * unit;
+    wheelSnapTimer = setTimeout(() => {
+        updatePosition();
+        gallery.style.removeProperty('scroll-snap-type');
+        goToPanel(current);
+    }, 140);
 }, { passive: false });
 document.querySelector('.visual-content')?.addEventListener('scroll', scheduleUpdate, { passive: true });
 window.addEventListener('scroll', scheduleUpdate, { passive: true });

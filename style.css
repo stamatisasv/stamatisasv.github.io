@@ -347,10 +347,11 @@ body{height:100dvh;display:flex;flex-direction:column;background:var(--paper)}
 @media(max-width:900px){.site-header{grid-template-columns:1fr auto}.site-header nav{gap:24px}.gallery .heal-flow{flex-direction:column;gap:10px}.gallery .visual-intro{align-items:flex-start;flex-direction:column;gap:12px}.gallery .about-details{gap:20px}.gallery .contact-social{font-size:clamp(20px,3.6vw,32px)}}
 @media(max-width:600px){.site-header{height:92px;grid-template-columns:1fr;padding-block:14px;gap:8px}.site-header nav{justify-content:space-between;gap:20px}.wordmark{font-size:24px}.gallery-tools{height:32px}.gallery{padding-block:8px}.gallery>.panel>.panel-label{font-size:9px;min-height:26px;margin-bottom:8px}.gallery .surface{gap:16px}.gallery .intro h1{font-size:clamp(30px,7.5vw,44px)}.gallery .hero-description{font-size:12px;margin:14px 0;max-width:100%}.gallery .hero-actions{gap:12px}.gallery .hero-primary{padding:10px;font-size:11px}.gallery .hero-disciplines{font-size:9px;line-height:1.5}.gallery .hero-next{display:none}.gallery .project-heading{display:block}.gallery .project-heading h2{font-size:36px}.gallery .project-heading p{text-align:left;margin-top:10px;font-size:12px}.gallery .project-info>p{font-size:12px;line-height:1.4}.gallery .project-foot{font-size:10px;gap:8px}.gallery .heal-preview{padding:16px}.gallery .heal-preview h3{font-size:24px}.gallery .visual-intro h2{font-size:36px}.gallery .visual-intro>p{font-size:11px}.gallery .about h2{font-size:28px}.gallery .about-details{grid-template-columns:1fr;gap:10px}.gallery .resume-row{gap:6px;padding-top:8px}.gallery .about-details h3{font-size:12px;margin-bottom:4px}.gallery .about-details p{font-size:10px;line-height:1.4}.gallery .resume-link{font-size:10px}.gallery .contact-social{font-size:18px}.project-grid{grid-template-columns:1fr;gap:32px}.site-footer{padding-bottom:10px}}
 
-/* Keep slides compact on wide displays and let neighboring sections remain visible. */
-.gallery{align-items:center}
-@media(max-width:900px){.gallery>.panel{flex-basis:86vw}}
-@media(max-width:600px){.gallery>.panel{flex-basis:calc(100vw - 2 * var(--gutter))}}
+/* Center every snap point, including the first and last slides. */
+.gallery{--panel-width:min(76vw,1120px);align-items:center;scroll-snap-type:x mandatory;scroll-padding-inline:0;padding-inline:calc((100vw - var(--panel-width)) / 2)}
+.gallery>.panel{flex-basis:var(--panel-width);scroll-snap-align:center;scroll-snap-stop:always}
+@media(max-width:900px){.gallery{--panel-width:86vw}}
+@media(max-width:600px){.gallery{--panel-width:calc(100vw - 2 * var(--gutter))}}
 
 /* All eight slides share the same outer frame and surface baseline. */
 .gallery>.panel{box-sizing:border-box;padding:0;margin:0}
